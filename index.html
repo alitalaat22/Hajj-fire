@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html dir="rtl" lang="ar"> 
+<html dir="rtl" lang="ar">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
@@ -560,7 +561,8 @@
                 <div class="logo-placeholder"><img src="الهيئة الملكية .jpg" alt=""></div>
             </div>
             <div class="header-text">
-                <h1>📋 الخطة التشغيلية الميدانية لمشروع الحراسات الأمنية على دورات المياه النسائية بالمشاعر المقدسة لموسم حج 1446
+                <h1>📋 الخطة التشغيلية الميدانية لمشروع الحراسات الأمنية على دورات المياه النسائية بالمشاعر المقدسة
+                    لموسم حج 1446
                 </h1>
                 <p>منى | عرفة | مزدلفة | خطة تشغيل، إعاشة، مهام يومية</p>
             </div>
@@ -738,6 +740,8 @@
             </div>
         </div>
     </div>
+
+
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
     import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
@@ -789,13 +793,13 @@
         guardsData = [];
         for (let i = 1; i <= 492; i++) {
             let site = i <= 174 ? "عرفة" : (i <= 348 ? "مزدلفة" : "منى");
-            let barcode = `BAR${i.toString().padStart(5, "0")}`;
+            let barcode = `BAR${i.toString().padStart(5, '0')}`;
             guardsData.push({
                 id: i,
-                barcode,
+                barcode: barcode,
                 shift: "صباحي",
                 dutyTime: MORNING_SHIFT,
-                site,
+                site: site,
                 toiletCode: `دورة-${i}`,
                 zone: `منطقة ${(i % 8) + 1}`,
                 bus: `باص صباحي ${Math.ceil(i / 50)}`,
@@ -808,13 +812,13 @@
         for (let i = 493; i <= 984; i++) {
             let idx = i - 492;
             let site = idx <= 174 ? "عرفة" : (idx <= 348 ? "مزدلفة" : "منى");
-            let barcode = `BAR${i.toString().padStart(5, "0")}`;
+            let barcode = `BAR${i.toString().padStart(5, '0')}`;
             guardsData.push({
                 id: i,
-                barcode,
+                barcode: barcode,
                 shift: "مسائي",
                 dutyTime: EVENING_SHIFT,
-                site,
+                site: site,
                 toiletCode: `دورة-${idx}`,
                 zone: `منطقة ${(idx % 8) + 1}`,
                 bus: `باص مسائي ${Math.ceil(idx / 50)}`,
@@ -829,7 +833,7 @@
             let site = i <= 348 ? "عرفة" : (i <= 696 ? "مزدلفة" : "منى");
             toiletsData.push({
                 id: i,
-                site,
+                site: site,
                 zone: `منطقة ${(i % 8) + 1}`,
                 code: `${site}-${i}`,
                 model: i % 3 === 0 ? "نموذج 3" : "نموذج 1",
@@ -888,38 +892,26 @@
     async function saveToServer(silent = false) {
         try {
             await setDoc(stateRef, serializeState(), { merge: false });
-            if (!silent) alert("✅ تم حفظ التغييرات للجميع");
+            if (!silent) alert("✅ تم حفظ التغييرات على Firebase");
         } catch (e) {
             console.error(e);
             if (!silent) alert("❌ فشل الحفظ على Firebase");
         }
     }
 
-    async function bootstrapFirebaseData() {
+    async function loadFromServer() {
         try {
             const snap = await getDoc(stateRef);
             if (snap.exists()) {
                 applyState(snap.data());
             } else {
                 initDefaultData();
-                await setDoc(stateRef, serializeState(), { merge: false });
+                await saveToServer(true);
             }
         } catch (e) {
             console.error(e);
             initDefaultData();
         }
-        renderAll();
-        bindEvents();
-        handleScrollButton();
-
-        onSnapshot(stateRef, (snapshot) => {
-            if (snapshot.exists()) {
-                applyState(snapshot.data());
-                renderAll();
-            }
-        }, (err) => {
-            console.error("Firestore listener error:", err);
-        });
     }
 
     function renderOpsTable() {
@@ -928,10 +920,10 @@
         opsData.forEach((row, idx) => {
             let tr = document.createElement("tr");
             tr.innerHTML = `
-                <td class="${editMode ? "editable-cell" : ""}" contenteditable="${editMode}" data-table="ops" data-field="day" data-idx="${idx}">${escapeHTML(row.day)}</td>
-                <td class="${editMode ? "editable-cell" : ""}" contenteditable="${editMode}" data-table="ops" data-field="sites" data-idx="${idx}">${escapeHTML(row.sites)}</td>
-                <td class="${editMode ? "editable-cell" : ""}" contenteditable="${editMode}" data-table="ops" data-field="am" data-idx="${idx}">${escapeHTML(row.am)}</td>
-                <td class="${editMode ? "editable-cell" : ""}" contenteditable="${editMode}" data-table="ops" data-field="pm" data-idx="${idx}">${escapeHTML(row.pm)}</td>`;
+                <td class="${editMode ? 'editable-cell' : ''}" contenteditable="${editMode}" data-table="ops" data-field="day" data-idx="${idx}">${escapeHTML(row.day)}</td>
+                <td class="${editMode ? 'editable-cell' : ''}" contenteditable="${editMode}" data-table="ops" data-field="sites" data-idx="${idx}">${escapeHTML(row.sites)}</td>
+                <td class="${editMode ? 'editable-cell' : ''}" contenteditable="${editMode}" data-table="ops" data-field="am" data-idx="${idx}">${escapeHTML(row.am)}</td>
+                <td class="${editMode ? 'editable-cell' : ''}" contenteditable="${editMode}" data-table="ops" data-field="pm" data-idx="${idx}">${escapeHTML(row.pm)}</td>`;
             tbody.appendChild(tr);
         });
         if (editMode) attachCellEvents();
@@ -973,16 +965,16 @@
         guardsData.forEach((g, idx) => {
             let tr = document.createElement("tr");
             tr.innerHTML = `
-                <td class="${editMode ? "editable-cell" : ""}" contenteditable="${editMode}" data-table="guards" data-field="id" data-idx="${idx}">${escapeHTML(g.id)}</td>
-                <td class="${editMode ? "editable-cell" : ""}" contenteditable="${editMode}" data-table="guards" data-field="barcode" data-idx="${idx}">${escapeHTML(g.barcode)}</td>
-                <td class="${editMode ? "editable-cell" : ""}" contenteditable="${editMode}" data-table="guards" data-field="shift" data-idx="${idx}">${escapeHTML(g.shift)}</td>
-                <td class="${editMode ? "editable-cell" : ""}" contenteditable="${editMode}" data-table="guards" data-field="site" data-idx="${idx}">${escapeHTML(g.site)}</td>
-                <td class="${editMode ? "editable-cell" : ""}" contenteditable="${editMode}" data-table="guards" data-field="toiletCode" data-idx="${idx}">${escapeHTML(g.toiletCode)}</td>
-                <td class="${editMode ? "editable-cell" : ""}" contenteditable="${editMode}" data-table="guards" data-field="zone" data-idx="${idx}">${escapeHTML(g.zone)}</td>
-                <td class="${editMode ? "editable-cell" : ""}" contenteditable="${editMode}" data-table="guards" data-field="bus" data-idx="${idx}">${escapeHTML(g.bus)}</td>
-                <td class="${editMode ? "editable-cell" : ""}" contenteditable="${editMode}" data-table="guards" data-field="tent" data-idx="${idx}">${escapeHTML(g.tent)}</td>
-                <td class="${editMode ? "editable-cell" : ""}" contenteditable="${editMode}" data-table="guards" data-field="bed" data-idx="${idx}">${escapeHTML(g.bed)}</td>
-                <td class="${editMode ? "editable-cell" : ""}" contenteditable="${editMode}" data-table="guards" data-field="supervisor" data-idx="${idx}">${escapeHTML(g.supervisor)}</td>
+                <td class="${editMode ? 'editable-cell' : ''}" contenteditable="${editMode}" data-table="guards" data-field="id" data-idx="${idx}">${escapeHTML(g.id)}</td>
+                <td class="${editMode ? 'editable-cell' : ''}" contenteditable="${editMode}" data-table="guards" data-field="barcode" data-idx="${idx}">${escapeHTML(g.barcode)}</td>
+                <td class="${editMode ? 'editable-cell' : ''}" contenteditable="${editMode}" data-table="guards" data-field="shift" data-idx="${idx}">${escapeHTML(g.shift)}</td>
+                <td class="${editMode ? 'editable-cell' : ''}" contenteditable="${editMode}" data-table="guards" data-field="site" data-idx="${idx}">${escapeHTML(g.site)}</td>
+                <td class="${editMode ? 'editable-cell' : ''}" contenteditable="${editMode}" data-table="guards" data-field="toiletCode" data-idx="${idx}">${escapeHTML(g.toiletCode)}</td>
+                <td class="${editMode ? 'editable-cell' : ''}" contenteditable="${editMode}" data-table="guards" data-field="zone" data-idx="${idx}">${escapeHTML(g.zone)}</td>
+                <td class="${editMode ? 'editable-cell' : ''}" contenteditable="${editMode}" data-table="guards" data-field="bus" data-idx="${idx}">${escapeHTML(g.bus)}</td>
+                <td class="${editMode ? 'editable-cell' : ''}" contenteditable="${editMode}" data-table="guards" data-field="tent" data-idx="${idx}">${escapeHTML(g.tent)}</td>
+                <td class="${editMode ? 'editable-cell' : ''}" contenteditable="${editMode}" data-table="guards" data-field="bed" data-idx="${idx}">${escapeHTML(g.bed)}</td>
+                <td class="${editMode ? 'editable-cell' : ''}" contenteditable="${editMode}" data-table="guards" data-field="supervisor" data-idx="${idx}">${escapeHTML(g.supervisor)}</td>
                 <td><button onclick="generateRowQR('${escapeAttr(g.barcode)}')">📱 QR</button></td>
                 <td><button onclick="openIDCard(${idx})">🎫 بطاقة</button></td>`;
             tbody.appendChild(tr);
@@ -996,12 +988,12 @@
         toiletsData.forEach((t, idx) => {
             let tr = document.createElement("tr");
             tr.innerHTML = `
-                <td class="${editMode ? "editable-cell" : ""}" contenteditable="${editMode}" data-table="toilets" data-field="id" data-idx="${idx}">${escapeHTML(t.id)}</td>
-                <td class="${editMode ? "editable-cell" : ""}" contenteditable="${editMode}" data-table="toilets" data-field="site" data-idx="${idx}">${escapeHTML(t.site)}</td>
-                <td class="${editMode ? "editable-cell" : ""}" contenteditable="${editMode}" data-table="toilets" data-field="zone" data-idx="${idx}">${escapeHTML(t.zone)}</td>
-                <td class="${editMode ? "editable-cell" : ""}" contenteditable="${editMode}" data-table="toilets" data-field="code" data-idx="${idx}">${escapeHTML(t.code)}</td>
-                <td class="${editMode ? "editable-cell" : ""}" contenteditable="${editMode}" data-table="toilets" data-field="model" data-idx="${idx}">${escapeHTML(t.model)}</td>
-                <td class="${editMode ? "editable-cell" : ""}" contenteditable="${editMode}" data-table="toilets" data-field="accessible" data-idx="${idx}">${escapeHTML(t.accessible)}</td>`;
+                <td class="${editMode ? 'editable-cell' : ''}" contenteditable="${editMode}" data-table="toilets" data-field="id" data-idx="${idx}">${escapeHTML(t.id)}</td>
+                <td class="${editMode ? 'editable-cell' : ''}" contenteditable="${editMode}" data-table="toilets" data-field="site" data-idx="${idx}">${escapeHTML(t.site)}</td>
+                <td class="${editMode ? 'editable-cell' : ''}" contenteditable="${editMode}" data-table="toilets" data-field="zone" data-idx="${idx}">${escapeHTML(t.zone)}</td>
+                <td class="${editMode ? 'editable-cell' : ''}" contenteditable="${editMode}" data-table="toilets" data-field="code" data-idx="${idx}">${escapeHTML(t.code)}</td>
+                <td class="${editMode ? 'editable-cell' : ''}" contenteditable="${editMode}" data-table="toilets" data-field="model" data-idx="${idx}">${escapeHTML(t.model)}</td>
+                <td class="${editMode ? 'editable-cell' : ''}" contenteditable="${editMode}" data-table="toilets" data-field="accessible" data-idx="${idx}">${escapeHTML(t.accessible)}</td>`;
             tbody.appendChild(tr);
         });
         if (editMode) attachCellEvents();
@@ -1041,7 +1033,7 @@
 
     async function addGuard() {
         let newId = guardsData.length ? Math.max(...guardsData.map(g => Number(g.id) || 0)) + 1 : 1;
-        let newBarcode = `BAR${newId.toString().padStart(5, "0")}`;
+        let newBarcode = `BAR${newId.toString().padStart(5, '0')}`;
         guardsData.push({
             id: newId,
             barcode: newBarcode,
@@ -1083,7 +1075,7 @@
             <div class="info-item">🆔 ${escapeHTML(result.id)}</div>
             <div class="info-item">📦 ${escapeHTML(result.barcode)}</div>
             <div class="info-item">🕒 ${escapeHTML(result.shift)}</div>
-            <div class="info-item">⏱️ ${escapeHTML(result.dutyTime || (result.shift === "مسائي" ? EVENING_SHIFT : MORNING_SHIFT))}</div>
+            <div class="info-item">⏱️ ${escapeHTML(result.dutyTime || (result.shift === 'مسائي' ? EVENING_SHIFT : MORNING_SHIFT))}</div>
             <div class="info-item">📍 ${escapeHTML(result.site)}</div>
             <div class="info-item">🚾 ${escapeHTML(result.toiletCode)}</div>
             <div class="info-item">🚌 ${escapeHTML(result.bus)}</div>
@@ -1176,7 +1168,7 @@
             <div><strong>رقم الحارسة:</strong> ${escapeHTML(g.id)}</div>
             <div><strong>البار كود:</strong> ${escapeHTML(g.barcode)}</div>
             <div><strong>الشفت:</strong> ${escapeHTML(g.shift)}</div>
-            <div><strong>وقت الدوام:</strong> ${escapeHTML(g.dutyTime || (g.shift === "مسائي" ? EVENING_SHIFT : MORNING_SHIFT))}</div>
+            <div><strong>وقت الدوام:</strong> ${escapeHTML(g.dutyTime || (g.shift === 'مسائي' ? EVENING_SHIFT : MORNING_SHIFT))}</div>
             <div><strong>الموقع:</strong> ${escapeHTML(g.site)}</div>
             <div><strong>دورة المياه:</strong> ${escapeHTML(g.toiletCode)}</div>
             <div><strong>المنطقة:</strong> ${escapeHTML(g.zone)}</div>
@@ -1270,7 +1262,7 @@
             status.textContent = "وجّه الكاميرا نحو QR أو الباركود.";
 
             if (!("BarcodeDetector" in window)) {
-                status.textContent = "المسح المباشر غير مدعوم في هذا المتصفح، لكن الكاميرا تعمل. استخدم البحث اليدوي أو Chrome/Edge الحديث.";
+                status.textContent = "المسح المباشر غير مدعوم في هذا المتصفح، لكن الكاميرا تعمل. استخدم البحث اليدوي أو افتح الصفحة في Chrome/Edge الحديث.";
                 return;
             }
 
@@ -1278,7 +1270,7 @@
                 scannerDetector = new BarcodeDetector({
                     formats: ["qr_code", "code_128", "code_39", "ean_13", "ean_8", "upc_a", "upc_e"]
                 });
-            } catch {
+            } catch (e) {
                 scannerDetector = new BarcodeDetector();
             }
 
@@ -1293,7 +1285,7 @@
                             return;
                         }
                     }
-                } catch {
+                } catch (e) {
                 }
                 scanRequestId = requestAnimationFrame(scanLoop);
             };
@@ -1351,8 +1343,8 @@
         document.getElementById("resetDataBtn").addEventListener("click", async () => {
             initDefaultData();
             await saveToServer(true);
-            renderAll();
             editMode = false;
+            renderAll();
             alert("تم إعادة التعيين");
         });
 
@@ -1394,42 +1386,6 @@
         document.querySelector(".nav-buttons").appendChild(exportExcelBtn);
     }
 
-    async function addGuard() {
-        let newId = guardsData.length ? Math.max(...guardsData.map(g => Number(g.id) || 0)) + 1 : 1;
-        let newBarcode = `BAR${newId.toString().padStart(5, "0")}`;
-        guardsData.push({
-            id: newId,
-            barcode: newBarcode,
-            shift: "صباحي",
-            dutyTime: MORNING_SHIFT,
-            site: "منى",
-            toiletCode: `دورة-جديدة-${newId}`,
-            zone: "منطقة 1",
-            bus: "باص جديد",
-            tent: "صيوان جديد",
-            bed: 1,
-            supervisor: "مشرفة جديدة"
-        });
-        await saveToServer(true);
-        renderGuardsTable();
-        alert(`تم إضافة حارسة جديدة برقم ${newId} وبار كود ${newBarcode}.`);
-    }
-
-    async function addToilet() {
-        let newId = toiletsData.length ? Math.max(...toiletsData.map(t => Number(t.id) || 0)) + 1 : 1;
-        toiletsData.push({
-            id: newId,
-            site: "منى",
-            zone: "منطقة 1",
-            code: `دورة-جديدة-${newId}`,
-            model: "نموذج 1",
-            accessible: "لا"
-        });
-        await saveToServer(true);
-        renderToiletsTable();
-        alert(`تم إضافة دورة مياه جديدة برقم ${newId}.`);
-    }
-
     window.generateRowQR = generateRowQR;
     window.openIDCard = openIDCard;
     window.closeIDCard = closeIDCard;
@@ -1441,8 +1397,23 @@
     window.handleScannedValue = handleScannedValue;
     window.exportExcel = exportExcel;
 
-    bootstrapFirebaseData();
+    (async () => {
+        await loadFromServer();
+        renderAll();
+        bindEvents();
+        handleScrollButton();
+
+        onSnapshot(stateRef, (snapshot) => {
+            if (snapshot.exists()) {
+                applyState(snapshot.data());
+                renderAll();
+            }
+        }, (err) => {
+            console.error("Firestore listener error:", err);
+        });
+    })();
 </script>
 
+</body>
 
 </html>
